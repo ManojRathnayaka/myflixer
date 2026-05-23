@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Plyr
     const player = new Plyr('#player', {
         controls: ['play-large', 'play', 'current-time', 'mute', 'volume', 'fullscreen'],
-        keyboard: { focused: true, global: true }
+        keyboard: { focused: true, global: true },
+        doubleClick: { togglesFullscreen: false }
     });
 
     // Move the scrubber container inside .plyr so it remains visible in fullscreen mode
@@ -27,6 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
             playerHeader.addEventListener('mouseenter', () => {
                 player.toggleControls(true);
             });
+        }
+
+        // Double tap to seek logic
+        let lastTap = 0;
+        if (plyrContainer) {
+            plyrContainer.addEventListener('touchstart', (e) => {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                
+                if (tapLength < 300 && tapLength > 0) {
+                    // Double tap detected
+                    e.preventDefault(); 
+                    
+                    const touch = e.touches[0] || e.changedTouches[0];
+                    const rect = plyrContainer.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    
+                    if (x < rect.width / 2) {
+                        // Left side - rewind
+                        seekBy(-10);
+                        showRipple('left');
+                    } else {
+                        // Right side - forward
+                        seekBy(10);
+                        showRipple('right');
+                    }
+                }
+                lastTap = currentTime;
+            }, { passive: false });
         }
     });
 
@@ -133,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closePlayerBtn.addEventListener('click', () => {
         player.stop();
         playerOverlay.classList.add('hidden');
+        playerOverlay.classList.remove('active-controls');
         document.body.style.overflow = '';
         currentMoviePath = null;
     });
@@ -209,6 +240,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    // Reusable seek function
+    function seekBy(seconds) {
+        if (!currentMoviePath || playerOverlay.classList.contains('hidden')) return;
+
+        isSeeking = true;
+        player.toggleControls(false);
+        let targetTime = currentSeekOffset + player.currentTime + seconds;
+
+        if (targetTime < 0) targetTime = 0;
+        if (currentMovieDuration > 0 && targetTime > currentMovieDuration) {
+            targetTime = currentMovieDuration;
+        }
+
+        currentSeekOffset = targetTime;
+
+        if (customScrubber) {
+            customScrubber.value = currentSeekOffset;
+            updateScrubberUI(currentSeekOffset);
+        }
+
+        loadStream(currentSeekOffset);
+
+        player.once('playing', () => { 
+            isSeeking = false; 
+        });
+        setTimeout(() => { 
+            isSeeking = false; 
+        }, 2000);
+    }
+
+    // Ripple visual effect
+    function showRipple(direction) {
+        const container = document.querySelector('.video-container');
+        const ripple = document.createElement('div');
+        ripple.className = `tap-ripple tap-ripple-${direction}`;
+        ripple.innerHTML = direction === 'left' ? '<span>⏪ 10s</span>' : '<span>10s ⏩</span>';
+        container.appendChild(ripple);
+        
+        // Trigger animation
+        requestAnimationFrame(() => {
+            ripple.classList.add('animate');
+        });
+        
+        // Remove after animation
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
 
     // Handle Keyboard Shortcuts for Seeking
     document.addEventListener('keydown', (e) => {
@@ -216,38 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
             e.preventDefault();
-
-            isSeeking = true;
-            player.toggleControls(false);
             const skipAmount = 10;
-            let targetTime = currentSeekOffset + player.currentTime;
-
             if (e.key === 'ArrowRight') {
-                targetTime += skipAmount;
+                seekBy(skipAmount);
+                showRipple('right');
             } else if (e.key === 'ArrowLeft') {
-                targetTime -= skipAmount;
+                seekBy(-skipAmount);
+                showRipple('left');
             }
-
-            if (targetTime < 0) targetTime = 0;
-            if (currentMovieDuration > 0 && targetTime > currentMovieDuration) {
-                targetTime = currentMovieDuration;
-            }
-
-            currentSeekOffset = targetTime;
-
-            if (customScrubber) {
-                customScrubber.value = currentSeekOffset;
-                updateScrubberUI(currentSeekOffset);
-            }
-
-            loadStream(currentSeekOffset);
-
-            player.once('playing', () => { 
-                isSeeking = false; 
-            });
-            setTimeout(() => { 
-                isSeeking = false; 
-            }, 2000);
         }
     });
 

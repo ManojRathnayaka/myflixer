@@ -86,7 +86,6 @@ body {
     outline: none;
     border-color: var(--text-secondary);
     background-color: rgba(0, 0, 0, 0.9);
-    width: 300px;
 }
 
 /* Main Content & Grid */
@@ -110,9 +109,7 @@ body {
     #search-input {
         width: 150px;
     }
-    #search-input:focus {
-        width: 180px;
-    }
+
     .logo {
         font-size: 20px;
     }
@@ -182,6 +179,7 @@ body {
 .player-overlay.hidden {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .player-header {
@@ -342,4 +340,57 @@ body {
 .plyr--video.plyr--hide-controls .plyr__controls {
     transform: translateY(0) !important;
     opacity: 0 !important;
+}
+
+/* Double Tap Ripple Effect */
+.tap-ripple {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tap-ripple-left {
+    left: 0;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.tap-ripple-right {
+    right: 0;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.tap-ripple.animate {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.tap-ripple span {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    transition: transform 0.4s ease;
+}
+
+.tap-ripple.animate span {
+    transform: translateY(0);
 }
