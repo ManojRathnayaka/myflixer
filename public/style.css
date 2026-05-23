@@ -1,0 +1,342 @@
+:root {
+    --bg-main: #141414;
+    --bg-surface: #181818;
+    --bg-surface-hover: #2f2f2f;
+    --text-primary: #ffffff;
+    --text-secondary: #808080;
+    --accent: #E50914; /* Netflix Red */
+    --accent-hover: #f40612;
+    --border: #333333;
+    
+    --plyr-color-main: var(--accent);
+    --plyr-video-background: #000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0) 100%);
+    background-color: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4vw;
+    transition: background-color 0.4s;
+}
+
+.logo {
+    color: var(--accent);
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+}
+
+#search-input {
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 8px 12px 8px 40px;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: var(--text-secondary);
+    background-color: rgba(0, 0, 0, 0.9);
+    width: 300px;
+}
+
+/* Main Content & Grid */
+.main-content {
+    flex: 1;
+    padding: 20px 4vw 60px;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    padding-top: 20px;
+}
+
+@media (max-width: 600px) {
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    #search-input {
+        width: 150px;
+    }
+    #search-input:focus {
+        width: 180px;
+    }
+    .logo {
+        font-size: 20px;
+    }
+}
+
+.movie-card {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    background: linear-gradient(135deg, #2a2a2a 0%, #111 100%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+    z-index: 10;
+}
+
+/* Dynamic Gradients for Posters */
+.movie-card.gradient-1 { background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); }
+.movie-card.gradient-2 { background: linear-gradient(135deg, #141e30 0%, #243b55 100%); }
+.movie-card.gradient-3 { background: linear-gradient(135deg, #3a1c71 0%, #d76d77 50%, #ffaf7b 100%); }
+.movie-card.gradient-4 { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+.movie-card.gradient-5 { background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%); }
+
+.movie-card-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    word-break: normal;
+    overflow-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Player Overlay */
+.player-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.player-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.player-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 1010;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.player-overlay.active-controls .player-header {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-right: 20px;
+    transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+    transform: scale(1.1);
+}
+
+#now-playing-title {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.video-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plyr {
+    width: 100%;
+    height: 100%;
+}
+
+/* Custom Scrubber Netflix Style */
+.plyr__progress {
+    display: none !important;
+}
+
+.custom-scrubber-container {
+    position: absolute;
+    bottom: 50px; /* Above plyr controls, optimized for mobile landscape */
+    width: calc(100% - 40px);
+    left: 20px;
+    height: 20px;
+    z-index: 50;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.player-overlay.active-controls .custom-scrubber-container {
+    opacity: 1;
+}
+
+/* The visual track */
+.custom-scrubber-track {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    pointer-events: none;
+    transition: height 0.2s;
+}
+
+.custom-scrubber-progress {
+    height: 100%;
+    width: 0%;
+    background-color: var(--accent);
+    border-radius: 2px;
+}
+
+/* The actual input */
+#custom-scrubber {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    z-index: 2;
+    margin: 0;
+}
+
+#custom-scrubber::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    border: none;
+}
+
+.custom-scrubber-container:hover .custom-scrubber-track {
+    height: 8px;
+}
+
+#custom-scrubber::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.custom-scrubber-container:hover #custom-scrubber::-webkit-slider-thumb {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.loading {
+    text-align: center;
+    width: 100%;
+    padding: 50px;
+    font-size: 18px;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.plyr--hide-controls .custom-scrubber-container {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Prevent controls from moving down when hidden */
+.plyr--video.plyr--hide-controls .plyr__controls {
+    transform: translateY(0) !important;
+    opacity: 0 !important;
+}

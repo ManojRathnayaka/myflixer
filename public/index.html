@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYFLIXER</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Netflix Style Header -->
+        <header class="navbar">
+            <div class="logo">MYFLIXER</div>
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search-input" placeholder="Search titles...">
+            </div>
+        </header>
+
+        <!-- Main Grid Content -->
+        <main class="main-content">
+            <div id="movie-grid" class="movie-grid">
+                <!-- Movie cards will be injected here -->
+            </div>
+        </main>
+
+        <!-- Fullscreen Player Overlay -->
+        <div id="player-overlay" class="player-overlay hidden">
+            <div class="player-header">
+                <button id="close-player" class="close-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <h2 id="now-playing-title">Movie Title</h2>
+            </div>
+            
+            <div class="video-container">
+                <video id="player" playsinline controls data-poster="">
+                    <!-- Source injected via JS -->
+                </video>
+                <div class="custom-scrubber-container">
+                    <div class="custom-scrubber-track" id="custom-scrubber-track">
+                        <div class="custom-scrubber-progress" id="custom-scrubber-progress"></div>
+                    </div>
+                    <input type="range" id="custom-scrubber" min="0" max="100" value="0" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plyr JS -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <!-- Custom JS -->
+    <script src="/app.js"></script>
+</body>
+</html>
