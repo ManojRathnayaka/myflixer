@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.querySelector('.video-container');
         const ripple = document.createElement('div');
         ripple.className = `tap-ripple tap-ripple-${direction}`;
-        ripple.innerHTML = direction === 'left' ? '<span>⏪ 10s</span>' : '<span>10s ⏩</span>';
+        ripple.innerHTML = direction === 'left' ? '<span>-10s</span>' : '<span>+10s</span>';
         container.appendChild(ripple);
         
         // Trigger animation

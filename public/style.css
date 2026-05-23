@@ -262,6 +262,19 @@ body {
     display: none !important;
 }
 
+/* Prevent fullscreen and play buttons from turning red */
+.plyr__controls [data-plyr="fullscreen"][aria-pressed="true"],
+.plyr__controls [data-plyr="fullscreen"].plyr__control--pressed,
+.plyr__controls [data-plyr="play"][aria-pressed="true"],
+.plyr__controls [data-plyr="play"].plyr__control--pressed {
+    color: inherit !important;
+}
+.plyr__controls [data-plyr="fullscreen"]:hover,
+.plyr__controls [data-plyr="play"]:hover {
+    background: transparent !important;
+    color: inherit !important;
+}
+
 .custom-scrubber-container {
     position: absolute;
     bottom: 50px; /* Above plyr controls, optimized for mobile landscape */
