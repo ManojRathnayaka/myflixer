@@ -230,6 +230,10 @@ body {
 }
 
 @media (max-height: 600px) and (orientation: landscape) {
+    .movie-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
     .player-header {
         padding: max(15px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 15px max(20px, env(safe-area-inset-left));
     }
