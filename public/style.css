@@ -187,7 +187,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 30px;
+    padding: max(30px, env(safe-area-inset-top)) max(30px, env(safe-area-inset-right)) 30px max(30px, env(safe-area-inset-left));
     display: flex;
     align-items: center;
     z-index: 1010;
@@ -211,6 +211,13 @@ body {
     cursor: pointer;
     margin-right: 20px;
     transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.close-btn svg {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .close-btn:hover {
@@ -220,6 +227,20 @@ body {
 #now-playing-title {
     font-size: 24px;
     font-weight: 500;
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .player-header {
+        padding: max(15px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 15px max(20px, env(safe-area-inset-left));
+    }
+    .close-btn {
+        width: 32px;
+        height: 32px;
+        margin-right: 15px;
+    }
+    #now-playing-title {
+        font-size: 18px;
+    }
 }
 
 .video-container {
