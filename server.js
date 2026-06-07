@@ -153,7 +153,7 @@ fastify.get('/stream', async (request, reply) => {
 const start = async () => {
   try {
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
-    console.log(`Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`Server listening on http://localhost:${PORT}`);
   } catch (err) {
     console.error(err);
     process.exit(1);
